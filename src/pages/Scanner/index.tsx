@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 
@@ -10,8 +10,19 @@ import logo from '../../assets/images/logo.png';
 import {Container, Title} from './styles';
 import InputFile from '../../components/InputFile';
 import FormButton from '../../components/FormButton';
+import api from '../../services/api';
+
+interface UsersResponse {
+  id: number;
+  login: string;
+}
 
 const Scanner: React.FC = () => {
+  const [users, setUsers] = useState<UsersResponse[]>([]);
+
+  useEffect(() => {
+    api.get('users').then(response => setUsers(response.data));
+  }, [users]);
   return (
     <ScrollView>
       <Container>
@@ -19,7 +30,7 @@ const Scanner: React.FC = () => {
         <View>
           <Title>Scanner</Title>
         </View>
-        <Dropdown />
+        <Dropdown data={users} />
         <Input />
         <InputFile />
         <FormButton />

@@ -1,5 +1,7 @@
 import styled from 'styled-components/native';
 
+import {Picker} from '@react-native-picker/picker';
+
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export const Container = styled.View`
@@ -17,3 +19,10 @@ export const Container = styled.View`
 export const InputIcon = styled(Icon)`
   color: #00ae9d;
 `;
+
+export const Select = styled(Picker)`
+  color: #fff;
+  flex: 1;
+`;
+
+export const Option = styled(Picker.Item)``;
