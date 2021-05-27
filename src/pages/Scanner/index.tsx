@@ -11,6 +11,7 @@ import {Container, Title} from './styles';
 import InputFile from '../../components/InputFile';
 import FormButton from '../../components/FormButton';
 import api from '../../services/api';
+import PlusButton from '../../components/PlusButton';
 
 interface UsersResponse {
   id: number;
@@ -32,7 +33,8 @@ const Scanner: React.FC = () => {
         </View>
         <Dropdown data={users} />
         <Input />
-        <InputFile />
+        <InputFile title="Documentos" />
+        <PlusButton />
         <FormButton />
       </Container>
     </ScrollView>
