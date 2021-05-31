@@ -1,18 +1,35 @@
 import React, {useCallback, useMemo} from 'react';
-import {Alert, Image, View} from 'react-native';
+import {Alert, Image, ScrollView, TextInputProps} from 'react-native';
 import ImagePicker, {Image as ImageType} from 'react-native-image-crop-picker';
 
-import {Button, Container, PickerIcon, Text} from './styles';
+import {
+  Button,
+  Container,
+  ImageButton,
+  ImageButtonIcon,
+  ImgContainer,
+  PickerIcon,
+  TextInput,
+  Text,
+  DeleteButton,
+  DeleteIcon,
+} from './styles';
 
-interface InputFileProps {
-  title: string;
+interface InputFileProps extends TextInputProps {
+  deletable?: boolean;
 }
 
-const InputFile: React.FC<InputFileProps> = ({title, ...rest}) => {
-  const [response, setResponse] = React.useState([] as ImageType[]);
+const InputFile: React.FC<InputFileProps> = ({
+  deletable,
+  ...rest
+}: InputFileProps) => {
+  const [response, setResponse] = React.useState<ImageType[]>([]);
+  const [isDeleted, setIsDeleted] = React.useState(false);
+
   const filesUploaded = useMemo(() => {
     return response.map(image => image.path);
   }, [response]);
+
   const handleInputDocuments = useCallback(() => {
     ImagePicker.openPicker({
       multiple: true,
@@ -35,22 +52,70 @@ const InputFile: React.FC<InputFileProps> = ({title, ...rest}) => {
         }
       });
   }, [response]);
-  return (
-    <>
-      <Container {...rest}>
-        <Button onPress={handleInputDocuments}>
-          <PickerIcon name="add-a-photo" size={32} />
-          <Text>{title}</Text>
-        </Button>
-      </Container>
-      {response &&
-        response.map(item => (
-          <View key={item.path}>
-            <Image source={{uri: item.path}} style={{width: 50, height: 50}} />
-          </View>
-        ))}
-    </>
+
+  const handleDeleteImage = useCallback(
+    async (path: string) => {
+      const images = response.filter(item => item.path !== path);
+      setResponse(images);
+    },
+    [response],
   );
+
+  const handleDestroyYourself = useCallback(() => {
+    Alert.alert(
+      'Confirmar exclusão.',
+      'Deseja realmente excluir?',
+      [
+        {
+          text: 'SIM',
+          onPress: () => {
+            setIsDeleted(true);
+          },
+        },
+        {
+          text: 'NÃO',
+        },
+      ],
+      {cancelable: true},
+    );
+  }, []);
+  return !isDeleted ? (
+    <>
+      <Container>
+        <TextInput
+          placeholder="Nome do Documento"
+          placeholderTextColor="#eee"
+          {...rest}
+        />
+        <Button onPress={handleInputDocuments}>
+          <PickerIcon name="add-a-photo" size={24} />
+        </Button>
+        {deletable && (
+          <DeleteButton onPress={handleDestroyYourself}>
+            <DeleteIcon name="delete" size={24} />
+          </DeleteButton>
+        )}
+      </Container>
+      {response && (
+        <>
+          <ScrollView horizontal={true}>
+            {response.map(item => (
+              <ImgContainer key={item.path}>
+                <Image
+                  source={{uri: item.path}}
+                  style={{width: 100, height: 100}}
+                />
+                <ImageButton onPress={() => handleDeleteImage(item.path)}>
+                  <ImageButtonIcon name="clear" size={24} />
+                </ImageButton>
+              </ImgContainer>
+            ))}
+          </ScrollView>
+          <Text>{`${response.length.toString()} Imagens Selecionadas`}</Text>
+        </>
+      )}
+    </>
+  ) : null;
 };
 
 export default InputFile;

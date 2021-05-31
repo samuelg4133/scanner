@@ -3,15 +3,20 @@ import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 export const Container = styled.View`
-  height: 40px;
-  width: 40px;
-  border-radius: 20px;
-  border-color: #00AE9D;
-  border-width: 2px;
+  width: 100%;
+`;
+
+export const Button = styled.TouchableOpacity`
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
 `;
 
 export const PlusButtonIcon = styled(Icon)`
-  color: #c9d200;
+  color: #fff;
+  margin-right: 6px;
+`;
+
+export const Text = styled.Text`
+  color: #fff;
+  font-family: 'Asap-Regular';
 `;

@@ -1,13 +1,14 @@
 import React from 'react';
+import {TouchableOpacityProps} from 'react-native';
 
 import {Button, ButtonIcon, Container, Text} from './styles';
 
-const FormButton: React.FC = () => {
+const FormButton: React.FC<TouchableOpacityProps> = ({...rest}) => {
   return (
     <Container>
-      <Button>
-        <ButtonIcon name="send" size={32} />
+      <Button {...rest}>
         <Text>Confirmar</Text>
+        <ButtonIcon name="send" size={24} />
       </Button>
     </Container>
   );

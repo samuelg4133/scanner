@@ -8,12 +8,12 @@ export const Container = styled.View`
   width: 100%;
   height: 60px;
   padding: 0 16px;
-  margin: 30px 0;
+  margin: 20px 0;
   border-radius: 10px;
-  border-width: 2px;
+  border-width: 4px;
   background-color: #00ae9d;
   border-color: ${shade(0.5, '#00ae9d')};
-  justify-content: center;
+  flex-direction: row;
 `;
 
 export const Button = styled.TouchableOpacity`
@@ -26,7 +26,8 @@ export const Button = styled.TouchableOpacity`
 export const Text = styled.Text`
   color: #fff;
   font-family: 'Asap-Bold';
-  font-size: 24px;
+  font-size: 20px;
+  flex: 1;
 `;
 
 export const ButtonIcon = styled(Icon)`
