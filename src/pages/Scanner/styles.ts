@@ -40,3 +40,30 @@ export const Title = styled.Text`
   font-family: 'Asap-Bold';
   margin: 20px 0;
 `;
+
+export const ImgContainer = styled.View`
+  flex: 1;
+  flex-direction: row;
+  border-width: 2px;
+  border-radius: 8px;
+  border-color: #eee;
+  overflow: hidden;
+  margin: 0 8px;
+`;
+
+export const ImageButton = styled.TouchableOpacity`
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  background-color: #ee0000;
+`;
+
+export const ImageButtonIcon = styled(Icon)`
+  color: #fff;
+`;
+
+export const Text = styled.Text`
+  font-family: 'Asap-Bold';
+  color: #fff;
+  margin-bottom: 10px;
+`;
