@@ -62,8 +62,45 @@ export const ImageButtonIcon = styled(Icon)`
   color: #fff;
 `;
 
+export const PlusButtonContainer = styled.View`
+  width: 100%;
+`;
+
+export const PlusButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const PlusButtonIcon = styled(Icon)`
+  color: #fff;
+  margin-right: 6px;
+`;
+
 export const Text = styled.Text`
   font-family: 'Asap-Bold';
   color: #fff;
-  margin-bottom: 10px;
+`;
+
+//delete button
+export const DeleteButton = styled.TouchableOpacity`
+  background-color: red;
+  padding: 16px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const DeleteIcon = styled(Icon)`
+  color: #fff;
+`;
+
+export const InputFileContainer = styled.View`
+  width: 100%;
+  height: 60px;
+  padding-left: 16px;
+  margin-bottom: 5px;
+  border-radius: 10px;
+  border-width: 2px;
+  overflow: hidden;
+  border-color: #c9d200;
+  flex-direction: row;
 `;

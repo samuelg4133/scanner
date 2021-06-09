@@ -1,16 +1,10 @@
 import React, {useCallback} from 'react';
 import {Alert, GestureResponderEvent} from 'react-native';
 
-import {
-  Button,
-  Container,
-  PickerIcon,
-  TextInput,
-  DeleteButton,
-  DeleteIcon,
-} from './styles';
+import {Button, PickerIcon, TextInput} from './styles';
 
 interface InputFileProps {
+  children?: React.ReactNode;
   deletable?: boolean;
   inputValue?: string;
   onChangeText?: (text: string) => void;
@@ -18,35 +12,15 @@ interface InputFileProps {
 }
 
 const InputFile: React.FC<InputFileProps> = ({
+  children,
   deletable,
   inputValue,
   onChangeText,
   onPress,
   ...rest
 }: InputFileProps) => {
-  const [isDeleted, setIsDeleted] = React.useState(false);
-
-  const handleDestroyYourself = useCallback(() => {
-    Alert.alert(
-      'Confirmar exclusão.',
-      'Deseja realmente excluir?',
-      [
-        {
-          text: 'SIM',
-          onPress: () => {
-            setIsDeleted(true);
-          },
-        },
-        {
-          text: 'NÃO',
-        },
-      ],
-      {cancelable: true},
-    );
-  }, []);
-
-  return !isDeleted ? (
-    <Container>
+  return (
+    <>
       <TextInput
         placeholder="Nome do Documento"
         placeholderTextColor="#eee"
@@ -57,13 +31,8 @@ const InputFile: React.FC<InputFileProps> = ({
       <Button onPress={onPress}>
         <PickerIcon name="add-a-photo" size={24} />
       </Button>
-      {deletable && (
-        <DeleteButton onPress={handleDestroyYourself}>
-          <DeleteIcon name="delete" size={24} />
-        </DeleteButton>
-      )}
-    </Container>
-  ) : null;
+    </>
+  );
 };
 
 export default InputFile;
