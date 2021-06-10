@@ -16,9 +16,6 @@ import {
   DeleteButton,
   DeleteIcon,
   Dropdown,
-  ImageButton,
-  ImageButtonIcon,
-  ImgContainer,
   InputFileContainer,
   InputIcon,
   Option,
@@ -39,47 +36,44 @@ interface UsersResponse {
 
 interface ItemProps {
   key: string;
-  images?: ImageType[];
+  images: ImageType[];
   inputText?: string;
 }
 
-interface ResponseError {
-  reason: object;
-}
-
 const Scanner: React.FC = () => {
-  const [error, setError] = useState({} as ResponseError);
+  const [erro, setErro] = useState(false);
   const [users, setUsers] = useState<UsersResponse[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [selectedValue, setSelectedValue] = useState('');
 
-  const [response, setResponse] = React.useState<ImageType[]>([]);
-  const [inputFileValue, setInputFileValue] = useState('');
-
   const [items, setItems] = useState<ItemProps[]>([]);
 
-  const handleCreateItem = useCallback(() => {
-    setItems([...items, {key: uuid()}]);
-  }, [items]);
+  const handleCreateItem = () => {
+    setItems([...items, {key: uuid(), images: []}]);
+  };
 
-  const filesUploaded = useMemo(() => {
-    return response.map(image => image.path);
-  }, [response]);
-
-  const handleInputDocuments = useCallback(() => {
+  const handleInputDocuments = (key: string) => {
     ImagePicker.openPicker({
       multiple: true,
       mediaType: 'photo',
       sortOrder: 'desc',
     })
-      .then(res => {
-        const imageAlreadyUploaded = res.every(image =>
-          filesUploaded.includes(image.path),
-        );
-        if (imageAlreadyUploaded) {
-          Alert.alert('Imagem já selecionada!');
-        } else {
-          setResponse(response.concat(res));
+      .then(response => {
+        const pathsOfResponse = response.map(image => image.path);
+        const item = items.find(el => el.key == key);
+        const pathsOfItems = item?.images.map(image => image.path) || [];
+        if (item) {
+          const imageAlreadyUploaded = pathsOfResponse.every(pathOfResponse =>
+            pathsOfItems.includes(pathOfResponse),
+          );
+          if (imageAlreadyUploaded) {
+            Alert.alert('Image já selecionada para esse documento!');
+          } else {
+            const index = items.indexOf(item);
+            item.images = item.images.concat(response);
+            items[index] = item;
+            setItems(items);
+          }
         }
       })
       .catch(err => {
@@ -87,15 +81,15 @@ const Scanner: React.FC = () => {
           return;
         }
       });
-  }, [response]);
+  };
 
-  const handleDeleteImage = useCallback(
-    async (path: string) => {
-      const images = response.filter(item => item.path !== path);
-      setResponse(images);
-    },
-    [response],
-  );
+  // const handleDeleteImage = useCallback(
+  //   async (path: string) => {
+  //     const images = response.filter(item => item.path !== path);
+  //     setResponse(images);
+  //   },
+  //   [response],
+  // );
 
   const handleChangeSelectedValue = useCallback(
     (value, _) => {
@@ -108,10 +102,10 @@ const Scanner: React.FC = () => {
     api
       .get('users')
       .then(response => {
-        setUsers(response.data), setError({} as ResponseError);
+        setUsers(response.data), setErro(false);
       })
-      .catch(reason => {
-        setError(reason);
+      .catch(() => {
+        setErro(true);
       });
   }, [users]);
 
@@ -122,17 +116,9 @@ const Scanner: React.FC = () => {
     [setInputValue],
   );
 
-  const handleChangeInputFileText = useCallback(
-    (value: string) => {
-      setInputFileValue(value);
-    },
-    [setInputFileValue],
-  );
-
-  const handleChangeInputTextValueOnDeletableInputFile = useCallback(
+  const handleChangeTextOnInputFile = useCallback(
     async (key: string, value: string) => {
       const item = items.find(el => el.key == key);
-
       if (item) {
         const index = items.indexOf(item);
         items[index].inputText = value;
@@ -142,13 +128,8 @@ const Scanner: React.FC = () => {
     [setItems],
   );
 
-  const handleDestroyYourself = useCallback(
+  const handleDeleteInputFile = useCallback(
     (key: string) => {
-      // const item = items.find(el => el.key == key);
-      // if (item) {
-      //   const index = items.indexOf(item);
-      //   setItems(items.splice(index, 1));
-      // }
       const itemsFiltered = items.filter(el => el.key !== key);
       setItems(itemsFiltered);
     },
@@ -156,12 +137,15 @@ const Scanner: React.FC = () => {
   );
 
   const handleSubmit = useCallback(() => {
-    console.log({selectedValue, inputValue, inputFileValue, response});
-  }, [inputValue, selectedValue, inputFileValue, response]);
+    api
+      .post('digitalizar', items)
+      .then(response => console.log(response))
+      .catch(reason => console.error(reason));
+  }, [inputValue, selectedValue, items]);
 
-  return error ? (
+  return (
     <ScrollView>
-      <Container>
+      <Container padding={20}>
         <Image source={logo} />
         <View>
           <Title>Scanner</Title>
@@ -181,60 +165,36 @@ const Scanner: React.FC = () => {
           value={inputValue}
           onChangeText={text => handleChangeInputText(text)}
         />
-        <InputFileContainer>
-          <InputFile
-            inputValue={inputFileValue}
-            onChangeText={text => handleChangeInputFileText(text)}
-            onPress={handleInputDocuments}
-          />
-        </InputFileContainer>
-        {response && (
-          <>
-            <ScrollView horizontal={true}>
-              {response.map(item => (
-                <ImgContainer key={item.path}>
-                  <Image
-                    source={{uri: item.path}}
-                    style={{width: 100, height: 100}}
-                  />
-                  <ImageButton onPress={() => handleDeleteImage(item.path)}>
-                    <ImageButtonIcon name="clear" size={24} />
-                  </ImageButton>
-                </ImgContainer>
-              ))}
-            </ScrollView>
-            <Text>{`${response.length.toString()} Imagens Selecionadas`}</Text>
-          </>
-        )}
         {items.map(item => (
-          <InputFileContainer key={item.key}>
-            <InputFile
-              deletable
-              inputValue={item.inputText}
-              onChangeText={text =>
-                handleChangeInputTextValueOnDeletableInputFile(item.key, text)
-              }
-            />
-            <DeleteButton>
-              <DeleteIcon
-                name="delete"
-                size={24}
-                onPress={() => handleDestroyYourself(item.key)}
+          <Container key={item.key}>
+            <InputFileContainer>
+              <InputFile
+                deletable
+                inputValue={item.inputText}
+                onChangeText={text =>
+                  handleChangeTextOnInputFile(item.key, text)
+                }
+                onPress={() => handleInputDocuments(item.key)}
               />
-            </DeleteButton>
-          </InputFileContainer>
+              <DeleteButton onPress={() => handleDeleteInputFile(item.key)}>
+                <DeleteIcon name="delete" size={24} />
+              </DeleteButton>
+            </InputFileContainer>
+            <Text
+              marginBottom={
+                10
+              }>{`${item.images?.length.toString()} Imagens Selecionadas`}</Text>
+          </Container>
         ))}
         <PlusButtonContainer>
           <PlusButton onPress={handleCreateItem}>
             <PlusButtonIcon name="add-circle" size={32} />
-            <Text>Adicionar Campo</Text>
+            <Text>Adicionar Documento</Text>
           </PlusButton>
         </PlusButtonContainer>
         <FormButton onPress={handleSubmit} />
       </Container>
     </ScrollView>
-  ) : (
-    <Text>{error}</Text>
   );
 };
 
