@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, Image, View} from 'react-native';
+import {Image, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import ImagePicker, {Image as ImageType} from 'react-native-image-crop-picker';
 import 'react-native-get-random-values';
@@ -36,6 +36,7 @@ import {
 
 import api from '../../services/api';
 import axios from 'axios';
+import Toast from '../../components/Toast';
 
 interface UsersResponse {
   id: number;
@@ -55,6 +56,7 @@ const Scanner: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [login, setLogin] = useState('');
   const [users, setUsers] = useState<UsersResponse[]>([]);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     api
@@ -135,7 +137,7 @@ const Scanner: React.FC = () => {
               pathsOfItems.includes(pathOfResponse),
             );
             if (imageAlreadyUploaded) {
-              Alert.alert('Image já selecionada para esse documento!');
+              setVisible(!visible);
             } else {
               const index = items.indexOf(item);
               item.images = item.images.concat(response);
@@ -186,6 +188,12 @@ const Scanner: React.FC = () => {
     </ScrollView>
   ) : (
     <ScrollView>
+      <Toast
+        message="A foto já foi selecionada."
+        transparent
+        visible={visible}
+        onRequestClose={() => setVisible(!visible)}
+      />
       <Container padding={20}>
         <Image source={logo} />
         <View>
