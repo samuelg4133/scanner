@@ -1,4 +1,4 @@
-import styled from 'styled-components/native';
+import styled, {css} from 'styled-components/native';
 
 import {Picker} from '@react-native-picker/picker';
 
@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 interface ContainerProps {
   padding?: number;
+  hasOpacity?: boolean;
 }
 
 interface TextProps {
@@ -19,6 +20,11 @@ export const Container = styled.View<ContainerProps>`
   align-items: center;
   justify-content: center;
   padding: ${props => (props.padding ? `${props.padding}px` : 0)};
+  ${props =>
+    props.hasOpacity &&
+    css`
+      opacity: 0.5;
+    `}
 `;
 
 //delete button

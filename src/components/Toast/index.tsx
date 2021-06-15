@@ -14,19 +14,22 @@ import {
 interface ToastProps extends ModalProps {
   onRequestClose?: () => void;
   message: string;
-  type?: 'option' | 'warning';
+  type?: 'done' | 'error' | 'warning';
 }
 
-const Toast: React.FC<ToastProps> = ({onRequestClose, message, type, ...rest}) => {
+const Toast: React.FC<ToastProps> = ({
+  onRequestClose,
+  message,
+  type,
+  ...rest
+}) => {
   return (
     <Container>
-      <Modal
-        {...rest}
-        onRequestClose={onRequestClose}>
+      <Modal {...rest} onRequestClose={onRequestClose}>
         <Container>
           <ModalContainer>
             <Header>
-              <TitleIcon name="warning" size={32} />
+              <TitleIcon name={type || 'warning'} />
               <Title>ATENÇÃO!</Title>
             </Header>
             <Text>{message}</Text>

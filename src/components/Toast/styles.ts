@@ -1,9 +1,13 @@
-import styled from 'styled-components/native';
+import styled, {css} from 'styled-components/native';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 interface TextProps {
   color?: string;
+}
+
+interface IconProps {
+  typeOf?: 'done' | 'error' | 'warning';
 }
 
 export const Container = styled.View`
@@ -49,7 +53,25 @@ export const Title = styled.Text`
   color: #003641;
 `;
 
-export const TitleIcon = styled(Icon)`
-  color: #c9d200;
+export const TitleIcon = styled(Icon).attrs<IconProps>(props => ({
+  size: 32,
+}))`
   margin-right: 8px;
+  ${props =>
+    props.name === 'done' &&
+    css`
+      color: green;
+    `}
+
+  ${props =>
+    props.name === 'error' &&
+    css`
+      color: red;
+    `}
+
+    ${props =>
+    props.name === 'warning' &&
+    css`
+      color: #c9d200;
+    `}
 `;

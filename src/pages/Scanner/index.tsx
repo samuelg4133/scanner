@@ -8,8 +8,11 @@ import {v4 as uuid} from 'uuid';
 import Input from '../../components/Input';
 import InputFile from '../../components/InputFile';
 import FormButton from '../../components/FormButton';
+import Toast from '../../components/Toast';
 
 import logo from '../../assets/images/logo.png';
+
+import api from '../../services/api';
 
 import {
   Container,
@@ -34,10 +37,6 @@ import {
   Title,
 } from './styles';
 
-import api from '../../services/api';
-import axios from 'axios';
-import Toast from '../../components/Toast';
-
 interface UsersResponse {
   id: number;
   login: string;
@@ -49,6 +48,11 @@ interface ItemProps {
   inputText?: string;
 }
 
+interface ToastProps {
+  message: string;
+  visible: boolean;
+}
+
 const Scanner: React.FC = () => {
   const [document, setDocument] = useState('');
   const [error, setError] = useState(false);
@@ -56,13 +60,15 @@ const Scanner: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [login, setLogin] = useState('');
   const [users, setUsers] = useState<UsersResponse[]>([]);
-  const [visible, setVisible] = useState(false);
+  const [toast, setToast] = useState({visible: false} as ToastProps);
 
   useEffect(() => {
     api
       .get('users')
       .then(response => {
-        setUsers(response.data), setLoading(false), setError(false);
+        setUsers(response.data),
+          setLoading(false),
+          setError(false);
       })
       .catch(erro => {
         setUsers([]), setLoading(false), setError(true);
@@ -137,7 +143,10 @@ const Scanner: React.FC = () => {
               pathsOfItems.includes(pathOfResponse),
             );
             if (imageAlreadyUploaded) {
-              setVisible(!visible);
+              setToast({
+                visible: true,
+                message: 'A foto já foi selecionada.',
+              } as ToastProps);
             } else {
               const index = items.indexOf(item);
               item.images = item.images.concat(response);
@@ -160,10 +169,7 @@ const Scanner: React.FC = () => {
   }, [error, loading]);
 
   const handleSubmit = useCallback(() => {
-    axios
-      .post('http://localhost:3333/convert', {login, document})
-      .then(response => console.log(response.data))
-      .catch(response => console.error(response));
+    console.log({login, document, items});
   }, [login, document, items]);
 
   return loading ? (
@@ -189,12 +195,12 @@ const Scanner: React.FC = () => {
   ) : (
     <ScrollView>
       <Toast
-        message="A foto já foi selecionada."
+        message={toast.message}
         transparent
-        visible={visible}
-        onRequestClose={() => setVisible(!visible)}
+        visible={toast.visible}
+        onRequestClose={() => setToast({visible: false} as ToastProps)}
       />
-      <Container padding={20}>
+      <Container padding={20} hasOpacity={toast.visible}>
         <Image source={logo} />
         <View>
           <Title>Scanner</Title>
