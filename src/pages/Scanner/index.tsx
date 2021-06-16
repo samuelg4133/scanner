@@ -42,10 +42,16 @@ interface UsersResponse {
   login: string;
 }
 
+interface ImageProps{
+  filename: string;
+  path: string;
+  mime: 'image/jpg';
+}
+
 interface ItemProps {
   key: string;
-  images: ImageType[];
-  inputText?: string;
+  arquivos: ImageType[];
+  nomeArquivo?: string;
 }
 
 interface ToastProps {
@@ -54,7 +60,7 @@ interface ToastProps {
 }
 
 const Scanner: React.FC = () => {
-  const [document, setDocument] = useState('');
+  const [pasta, setPasta] = useState('');
   const [error, setError] = useState(false);
   const [items, setItems] = useState<ItemProps[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,24 +69,24 @@ const Scanner: React.FC = () => {
   const [toast, setToast] = useState({visible: false} as ToastProps);
 
   useEffect(() => {
-    api
-      .get('users')
-      .then(response => {
-        setUsers(response.data),
-          setLoading(false),
-          setError(false);
-      })
-      .catch(erro => {
-        setUsers([]), setLoading(false), setError(true);
-      });
+    // api
+    //   .get('users')
+    //   .then(response => {
+    //     setUsers(response.data), setLoading(false), setError(false);
+    //   })
+    //   .catch(erro => {
+    //     setUsers([]), setLoading(false), setError(true);
+    //   });
+
+    setUsers([{id: 1, login: 'samuelg4133_00'}]), setLoading(false), setError(false);
   }, [error, loading]);
 
   const handleDeleteImage = useCallback(
     async (key: string, path: string) => {
       const item = items.find(el => el.key == key);
       if (item) {
-        const image = item.images.filter(image => image.path != path);
-        item.images = image;
+        const image = item.arquivos.filter(image => image.path != path);
+        item.arquivos = image;
         const index = items.indexOf(item);
         items[index] = item;
         setItems([...items]);
@@ -91,9 +97,9 @@ const Scanner: React.FC = () => {
 
   const handleChangeInputText = useCallback(
     (value: string) => {
-      setDocument(value);
+      setPasta(value);
     },
-    [setDocument],
+    [setPasta],
   );
 
   const handleChangeSelectedValue = useCallback(
@@ -108,7 +114,7 @@ const Scanner: React.FC = () => {
       const item = items.find(el => el.key == key);
       if (item) {
         const index = items.indexOf(item);
-        items[index].inputText = value;
+        items[index].nomeArquivo = value;
         setItems(items);
       }
     },
@@ -116,7 +122,7 @@ const Scanner: React.FC = () => {
   );
 
   const handleCreateItem = useCallback(() => {
-    setItems([...items, {key: uuid(), images: []}]);
+    setItems([...items, {key: uuid(), arquivos: []}]);
   }, [items]);
 
   const handleDeleteInputFile = useCallback(
@@ -130,18 +136,16 @@ const Scanner: React.FC = () => {
   const handleInputDocuments = useCallback(
     (key: string) => {
       ImagePicker.openPicker({
-        multiple: true,
         mediaType: 'photo',
         sortOrder: 'desc',
+        forceJpg: true
       })
         .then(response => {
-          const pathsOfResponse = response.map(image => image.path);
           const item = items.find(el => el.key == key);
-          const pathsOfItems = item?.images.map(image => image.path) || [];
+          const pathsOfItems = item?.arquivos.map(image => image.path) || [];
           if (item) {
-            const imageAlreadyUploaded = pathsOfResponse.every(pathOfResponse =>
-              pathsOfItems.includes(pathOfResponse),
-            );
+            const imageAlreadyUploaded =  pathsOfItems.includes(response.path)
+
             if (imageAlreadyUploaded) {
               setToast({
                 visible: true,
@@ -149,7 +153,7 @@ const Scanner: React.FC = () => {
               } as ToastProps);
             } else {
               const index = items.indexOf(item);
-              item.images = item.images.concat(response);
+              item.arquivos = item.arquivos.concat(response);
               items[index] = item;
               setItems([...items]);
             }
@@ -168,9 +172,22 @@ const Scanner: React.FC = () => {
     setError(false), setLoading(true);
   }, [error, loading]);
 
+  const {} = items.map(item => item);
+
   const handleSubmit = useCallback(() => {
-    console.log({login, document, items});
-  }, [login, document, items]);
+    // api
+    //   .post('digitalizar', {
+    //     usuario: login,
+    //     nomePasta: pasta,
+    //     arquivos,
+    //     nomeArquivos,
+    //   })
+    //   .then(res => console.log(res.status))
+    //   .catch(res => console.error(res));
+
+    const item = items.map(item => item.arquivos);
+    console.log({login, pasta, item});
+  }, [login, pasta, items]);
 
   return loading ? (
     <ScrollView>
@@ -217,7 +234,7 @@ const Scanner: React.FC = () => {
           <InputIcon name="person" size={24} />
         </Dropdown>
         <Input
-          value={document}
+          value={pasta}
           onChangeText={text => handleChangeInputText(text)}
         />
         {items.map(item => (
@@ -225,7 +242,7 @@ const Scanner: React.FC = () => {
             <InputFileContainer>
               <InputFile
                 deletable
-                inputValue={item.inputText}
+                inputValue={item.nomeArquivo}
                 onChangeText={text =>
                   handleChangeTextOnInputFile(item.key, text)
                 }
@@ -235,9 +252,9 @@ const Scanner: React.FC = () => {
                 <DeleteIcon name="delete" size={24} />
               </DeleteButton>
             </InputFileContainer>
-            {item.images && (
+            {item.arquivos && (
               <ScrollView horizontal={true}>
-                {item.images.map(image => (
+                {item.arquivos.map(image => (
                   <ImgContainer key={image.path}>
                     <Image
                       source={{uri: image.path}}
@@ -257,7 +274,7 @@ const Scanner: React.FC = () => {
               key={item.key}
               marginBottom={
                 10
-              }>{`${item.images?.length.toString()} Imagens Selecionadas`}</Text>
+              }>{`${item.arquivos?.length.toString()} Imagens Selecionadas`}</Text>
           </Container>
         ))}
         <PlusButtonContainer>
