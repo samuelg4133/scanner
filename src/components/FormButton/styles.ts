@@ -26,7 +26,7 @@ export const Button = styled.TouchableOpacity`
 export const Text = styled.Text`
   color: #fff;
   font-family: 'Asap-Bold';
-  font-size: 20px;
+  font-size: 18px;
   flex: 1;
 `;
 

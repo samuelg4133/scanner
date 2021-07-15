@@ -1,7 +1,7 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import Scanner from '../pages/Scanner';
+import Scanner from '../screens/Scanner';
 import {shade} from 'polished';
 import {Image} from 'react-native';
 

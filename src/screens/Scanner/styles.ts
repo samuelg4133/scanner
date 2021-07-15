@@ -35,10 +35,6 @@ export const DeleteButton = styled.TouchableOpacity`
   justify-content: center;
 `;
 
-export const DeleteIcon = styled(Icon)`
-  color: #fff;
-`;
-
 export const Dropdown = styled.View`
   width: 100%;
   height: 60px;
@@ -49,13 +45,6 @@ export const Dropdown = styled.View`
   border-color: #00ae9d;
   flex-direction: row;
   align-items: center;
-`;
-
-export const ErrorContainer = styled.View`
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  margin: 0 20px;
 `;
 
 export const ImageButton = styled.TouchableOpacity`
@@ -95,20 +84,6 @@ export const ImgContainer = styled.View`
   margin: 0 8px;
 `;
 
-export const LoadingContainer = styled.View`
-  padding: 64px;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  justify-content: center;
-`;
-
-export const LoadingImage = styled.Image`
-  width: 100px;
-  height: 100px;
-  margin-bottom: 20px;
-`;
-
 export const Option = styled(Picker.Item)``;
 
 export const PlusButton = styled.TouchableOpacity`
@@ -125,29 +100,16 @@ export const PlusButtonIcon = styled(Icon)`
   margin-right: 6px;
 `;
 
-export const ReloadButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 64px;
-  margin: 20px;
-  background-color: red;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  border-radius: 10px;
-  border-width: 4px;
-  border-color: #c90000;
-`;
-
 export const Select = styled(Picker)`
   color: #fff;
   flex: 1;
 `;
 
 export const Title = styled.Text`
-  font-size: 24px;
+  font-size: 20px;
   color: #f4ede8;
   font-family: 'Asap-Bold';
-  margin: 20px 0;
+  margin: 16px 0;
 `;
 
 export const Text = styled.Text<TextProps>`

@@ -7,7 +7,7 @@ interface TextProps {
 }
 
 interface IconProps {
-  typeOf?: 'done' | 'error' | 'warning';
+  typeOf?: 'done' | 'camera' | 'error' | 'warning';
 }
 
 export const Container = styled.View`
@@ -40,17 +40,9 @@ export const ModalContainer = styled.View`
 `;
 
 export const Text = styled.Text<TextProps>`
-  font-family: 'Asap-Regular';
   font-size: 16px;
   text-align: center;
   color: ${props => (props.color ? `${props.color}` : '#003641')};
-`;
-
-export const Title = styled.Text`
-  font-family: 'Asap-Bold';
-  font-size: 20px;
-  text-align: center;
-  color: #003641;
 `;
 
 export const TitleIcon = styled(Icon).attrs<IconProps>(props => ({

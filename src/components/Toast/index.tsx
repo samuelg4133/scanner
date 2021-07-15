@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, ModalProps} from 'react-native';
+import {GestureResponderEvent, Modal, ModalProps} from 'react-native';
 
 import {
   Button,
@@ -7,14 +7,15 @@ import {
   Header,
   ModalContainer,
   Text,
-  Title,
   TitleIcon,
 } from './styles';
 
 interface ToastProps extends ModalProps {
   onRequestClose?: () => void;
+  onSelectCamera?: (event: GestureResponderEvent) => void;
+  onSelectGallery?: (event: GestureResponderEvent) => void;
   message: string;
-  type?: 'done' | 'error' | 'warning';
+  type?: 'camera'| 'done' | 'error' | 'warning';
 }
 
 const Toast: React.FC<ToastProps> = ({
@@ -23,14 +24,13 @@ const Toast: React.FC<ToastProps> = ({
   type,
   ...rest
 }) => {
-  return (
+  return  (
     <Container>
       <Modal {...rest} onRequestClose={onRequestClose}>
         <Container>
           <ModalContainer>
             <Header>
               <TitleIcon name={type || 'warning'} />
-              <Title>ATENÇÃO!</Title>
             </Header>
             <Text>{message}</Text>
             <Button onPress={onRequestClose}>

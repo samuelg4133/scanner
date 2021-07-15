@@ -18,5 +18,4 @@ export const PlusButtonIcon = styled(Icon)`
 
 export const Text = styled.Text`
   color: #fff;
-  font-family: 'Asap-Regular';
 `;
